@@ -36,4 +36,17 @@ describe("passport local strategy", () => {
 
     expect(done).toHaveBeenCalledWith(lookupError);
   });
+
+  it("calls done with no error and false when no user is found", () => {
+    const strategy = passport._strategies.local;
+    const done = jest.fn();
+
+    helper.findByUsername.mockImplementationOnce((username, cb) => {
+      cb(null, null);
+    });
+
+    strategy._verify("myuser", "mypassword", done);
+
+    expect(done).toHaveBeenCalledWith(null, false);
+  });
 });
