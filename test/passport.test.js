@@ -22,4 +22,18 @@ describe("passport local strategy", () => {
       expect.any(Function)
     );
   });
+
+  it("calls done with the error when helper.findByUsername fails", () => {
+    const strategy = passport._strategies.local;
+    const done = jest.fn();
+    const lookupError = new Error("lookup failed");
+
+    helper.findByUsername.mockImplementationOnce((username, cb) => {
+      cb(lookupError);
+    });
+
+    strategy._verify("myuser", "mypassword", done);
+
+    expect(done).toHaveBeenCalledWith(lookupError);
+  });
 });
