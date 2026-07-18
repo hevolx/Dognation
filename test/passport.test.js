@@ -62,4 +62,18 @@ describe("passport local strategy", () => {
 
     expect(done).toHaveBeenCalledWith(null, false);
   });
+
+  it("calls done with no error and the user when credentials are valid", () => {
+    const strategy = passport._strategies.local;
+    const done = jest.fn();
+    const matchedUser = { username: "myuser", password: "correctpassword" };
+
+    helper.findByUsername.mockImplementationOnce((username, cb) => {
+      cb(null, matchedUser);
+    });
+
+    strategy._verify("myuser", "correctpassword", done);
+
+    expect(done).toHaveBeenCalledWith(null, matchedUser);
+  });
 });
