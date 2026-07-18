@@ -21,7 +21,7 @@ router.post("/register", async (req, res) => {
     const newUser = { ...id, username, password: password };
 
     // Store new user in local DB
-    await users.push(newUser);
+    users.push(newUser);
     await helper.writeJSONFile(filename, users);
 
     res.redirect("login");
@@ -31,13 +31,17 @@ router.post("/register", async (req, res) => {
 });
 
 // Log In User:
-router.post("/login", (req, res) => {
-  res.redirect("../");
-});
+router.post("/login", passport.authenticate("local", {
+  successRedirect: "../",
+  failureRedirect: "login"
+}));
 
 // Log out user:
-router.get("/logout", (req, res) => {
-  res.redirect("../");
+router.get("/logout", (req, res, next) => {
+  req.logout((err) => {
+    if (err) return next(err);
+    res.redirect("../");
+  });
 });
 
 router.get("/register", (req, res) => {
