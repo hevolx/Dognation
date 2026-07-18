@@ -10,14 +10,14 @@ const getNewId = (array) => {
 };
 
 const userExists = async (username) => {
-  return await users.find((user) => user.username === username);
+  return users.find((user) => user.username === username);
 };
 
 const findById = function (id, cb) {
   process.nextTick(function () {
-    var idx = id - 1;
-    if (users[idx]) {
-      cb(null, users[idx]);
+    var user = users.find(u => u.id === id);
+    if (user) {
+      cb(null, user);
     } else {
       cb(new Error("User " + id + " does not exist"));
     }

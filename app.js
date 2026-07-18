@@ -3,7 +3,7 @@ const express = require("express");
 const app = express();
 const session = require("express-session");
 const passport = require("passport");
-require('dotenv').config();
+require('dotenv').config({ quiet: true })
 
 // App config
 app.set("trust proxy", 1);

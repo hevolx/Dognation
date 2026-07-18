@@ -1,7 +1,7 @@
 [
   {
     "id": 1,
-    "usernae": "john@codecademy.com",
+    "username": "john@codecademy.com",
     "password": "$2a$09$pTY64HFYA5mQ2eMxSYYk.ucarnMn3A0Zv2rLab/ltpCjsf1myt3Gy"
   },
   {
@@ -11,8 +11,8 @@
   },
   {
     "id": 3,
-    "password": "$2b$10$E5yVR1aSR5f0N/8n.zpCNuD98LQnUOv0s6AVT2aU8gntjiK0taldK",
-    "username": "lola"
+    "username": "lola",
+    "password": "$2b$10$E5yVR1aSR5f0N/8n.zpCNuD98LQnUOv0s6AVT2aU8gntjiK0taldK"
   },
   {
     "id": 4,
