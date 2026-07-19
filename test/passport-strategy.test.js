@@ -4,6 +4,7 @@ jest.mock("../helpers/helper", () => ({
 }));
 
 const passport = require("passport");
+const bcrypt = require("bcrypt");
 const helper = require("../helpers/helper");
 require("../config/passport");
 
@@ -51,15 +52,21 @@ describe("Authenticating Users with Passport.js", () => {
     expect(done).toHaveBeenCalledWith(null, false);
   });
 
-  it("calls done with no error and false when the password is invalid", () => {
+  it("calls done with no error and false when the password is invalid", async () => {
     const strategy = passport._strategies.local;
     const done = jest.fn();
+    jest.spyOn(bcrypt, "compare").mockResolvedValue(false);
 
     helper.findByUsername.mockImplementationOnce((username, cb) => {
       cb(null, { username: "myuser", password: "correctpassword" });
     });
 
-    strategy._verify("myuser", "wrongpassword", done);
+    await new Promise((resolve) => {
+      strategy._verify("myuser", "wrongpassword", (...args) => {
+        done(...args);
+        resolve();
+      });
+    });
 
     expect(done).toHaveBeenCalledWith(null, false);
   });
@@ -74,16 +81,37 @@ describe("Authenticating Users with Passport.js", () => {
     expect(callback.constructor.name).toBe("AsyncFunction");
   });
 
-  it("calls done with no error and the user when credentials are valid", () => {
+  it("compares the provided password with the user's hashed password using bcrypt", () => {
     const strategy = passport._strategies.local;
     const done = jest.fn();
-    const matchedUser = { username: "myuser", password: "correctpassword" };
+    const matchedUser = { username: "myuser", password: "hashedpassword" };
+    const compareSpy = jest.spyOn(bcrypt, "compare").mockResolvedValue(true);
 
     helper.findByUsername.mockImplementationOnce((username, cb) => {
       cb(null, matchedUser);
     });
 
-    strategy._verify("myuser", "correctpassword", done);
+    strategy._verify("myuser", "plaintextpassword", done);
+
+    expect(compareSpy).toHaveBeenCalledWith("plaintextpassword", "hashedpassword");
+  });
+
+  it("calls done with no error and the user when credentials are valid", async () => {
+    const strategy = passport._strategies.local;
+    const done = jest.fn();
+    const matchedUser = { username: "myuser", password: "correctpassword" };
+    jest.spyOn(bcrypt, "compare").mockResolvedValue(true);
+
+    helper.findByUsername.mockImplementationOnce((username, cb) => {
+      cb(null, matchedUser);
+    });
+
+    await new Promise((resolve) => {
+      strategy._verify("myuser", "correctpassword", (...args) => {
+        done(...args);
+        resolve();
+      });
+    });
 
     expect(done).toHaveBeenCalledWith(null, matchedUser);
   });
