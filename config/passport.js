@@ -9,8 +9,12 @@ passport.use(new LocalStrategy(
     helper.findByUsername(username, async function (err, user) {
       if (err) return done(err);
       if (!user) return done(null, false);
-      if (!(await bcrypt.compare(password, user.password))) return done(null, false);
-      return done(null, user);
+      try {
+        if (!(await bcrypt.compare(password, user.password))) return done(null, false);
+        return done(null, user);
+      } catch (compareErr) {
+        return done(compareErr);
+      }
     });
   }
 ));
