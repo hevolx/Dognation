@@ -17,7 +17,7 @@ router.post("/register", async (req, res) => {
       return res.redirect("login");
     }
     // Hash password before storing in local DB:
-
+    const salt = await bcrypt.genSalt(10);
     const newUser = { ...id, username, password: password };
 
     // Store new user in local DB
