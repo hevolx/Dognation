@@ -98,4 +98,17 @@ describe("passport local strategy", () => {
 
     expect(helper.findById).toHaveBeenCalledWith(42, expect.any(Function));
   });
+
+  it("calls done with the error when helper.findById fails", () => {
+    const done = jest.fn();
+    const lookupError = new Error("lookup failed");
+
+    helper.findById.mockImplementationOnce((id, cb) => {
+      cb(lookupError);
+    });
+
+    passport._deserializers[0](42, done);
+
+    expect(done).toHaveBeenCalledWith(lookupError);
+  });
 });
