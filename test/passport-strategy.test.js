@@ -115,4 +115,24 @@ describe("Authenticating Users with Passport.js", () => {
 
     expect(done).toHaveBeenCalledWith(null, matchedUser);
   });
+
+  it("calls done with an error when bcrypt.compare throws", async () => {
+    const strategy = passport._strategies.local;
+    const done = jest.fn();
+    const compareError = new Error("compare failed");
+    jest.spyOn(bcrypt, "compare").mockRejectedValue(compareError);
+
+    helper.findByUsername.mockImplementationOnce((username, cb) => {
+      cb(null, { username: "myuser", password: "hashedpassword" });
+    });
+
+    await new Promise((resolve) => {
+      strategy._verify("myuser", "mypassword", (...args) => {
+        done(...args);
+        resolve();
+      });
+    });
+
+    expect(done).toHaveBeenCalledWith(compareError);
+  });
 });
