@@ -1,5 +1,6 @@
 jest.mock("../helpers/helper", () => ({
   findByUsername: jest.fn(),
+  findById: jest.fn(),
 }));
 
 const passport = require("passport");
@@ -88,5 +89,13 @@ describe("passport local strategy", () => {
 
   it("registers a deserializer function", () => {
     expect(passport._deserializers[0]).toBeInstanceOf(Function);
+  });
+
+  it("looks up the user via helper.findById with the given id", () => {
+    const done = jest.fn();
+
+    passport._deserializers[0](42, done);
+
+    expect(helper.findById).toHaveBeenCalledWith(42, expect.any(Function));
   });
 });
