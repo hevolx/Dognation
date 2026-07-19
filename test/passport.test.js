@@ -111,4 +111,17 @@ describe("passport local strategy", () => {
 
     expect(done).toHaveBeenCalledWith(lookupError);
   });
+
+  it("calls done with no error and the user when helper.findById succeeds", () => {
+    const done = jest.fn();
+    const foundUser = { id: 42, username: "myuser" };
+
+    helper.findById.mockImplementationOnce((id, cb) => {
+      cb(null, foundUser);
+    });
+
+    passport._deserializers[0](42, done);
+
+    expect(done).toHaveBeenCalledWith(null, foundUser);
+  });
 });
