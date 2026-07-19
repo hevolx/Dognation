@@ -64,6 +64,16 @@ describe("Authenticating Users with Passport.js", () => {
     expect(done).toHaveBeenCalledWith(null, false);
   });
 
+  it("passes an asynchronous callback to helper.findByUsername", () => {
+    const strategy = passport._strategies.local;
+    const done = jest.fn();
+
+    strategy._verify("myuser", "mypassword", done);
+
+    const [, callback] = helper.findByUsername.mock.calls[0];
+    expect(callback.constructor.name).toBe("AsyncFunction");
+  });
+
   it("calls done with no error and the user when credentials are valid", () => {
     const strategy = passport._strategies.local;
     const done = jest.fn();
