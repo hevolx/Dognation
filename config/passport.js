@@ -19,3 +19,6 @@ passport.serializeUser((user, done) => {
   done(null, user.id);
 })
 // Deserialize a user
+passport.deserializeUser((id, done) => {
+
+});

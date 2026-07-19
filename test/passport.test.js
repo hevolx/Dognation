@@ -85,4 +85,8 @@ describe("passport local strategy", () => {
 
     expect(done).toHaveBeenCalledWith(null, user.id);
   });
+
+  it("registers a deserializer function", () => {
+    expect(passport._deserializers[0]).toBeInstanceOf(Function);
+  });
 });
