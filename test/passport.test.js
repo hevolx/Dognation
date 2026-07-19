@@ -76,4 +76,13 @@ describe("passport local strategy", () => {
 
     expect(done).toHaveBeenCalledWith(null, matchedUser);
   });
+
+  it("serializes a user by calling done with the user's id", () => {
+    const done = jest.fn();
+    const user = { id: 42, username: "myuser" };
+
+    passport._serializers[0](user, done);
+
+    expect(done).toHaveBeenCalledWith(null, user.id);
+  });
 });
