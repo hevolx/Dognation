@@ -17,7 +17,7 @@ passport.use(new LocalStrategy(
 // Serialize a user
 passport.serializeUser((user, done) => {
   done(null, user.id);
-})
+});
 // Deserialize a user
 passport.deserializeUser((id, done) => {
   helper.findById(id, function (err, user) {
